@@ -6,40 +6,76 @@ using UnityEngine;
 using UnityEngine.PlayerLoop;
 using Random = UnityEngine.Random;
 
-public class Enemy : MonoBehaviour, IMoveable, IDamagable
+public class Enemy : Damagable, IMoveable
 {
     [SerializeField]
     private Transform playerTransform;
-    [Range(0,50)]
-    [SerializeField]
-    private float speed = 10.0f;
-    [SerializeField] float health = 10f;
+
+    public GameObject HPIndicator;
+    
+    
+    private Rigidbody2D rb2d;
+    private bool isCollidingWithPlayer = false;
+    private bool isDamagingPlayer = false;
     void Start()
     {
-        
+        rb2d = GetComponent<Rigidbody2D>();
+        currentHealth = stats.maxHealth;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        Move();
-        CheckIfDead();
+        isCollidingWithPlayer = CheckCollision();
+        if (isCollidingWithPlayer && !isDamagingPlayer)
+        {
+            isDamagingPlayer = true;
+            StartCoroutine(playerTransform.GetComponent<Player>().TakeDamageCoroutine());
+            StartCoroutine(ResetDamagingPlayerFlag());
+        }
     }
 
-    private void CheckIfDead()
+    void FixedUpdate()
     {
-        if(health <= 0) Destroy(gameObject);
+        Move();
     }
+    
+    // Interface definitions
     public void Move()
     {
-        transform.position = Vector3.MoveTowards(transform.position, playerTransform.position, speed * Time.deltaTime);
-    }
-    public void TakeDamage(int damage)
-    {
-        Debug.Log("Hit with "+ damage + " dmg, HP: " + health);
-        health -= damage;
+        if (isCollidingWithPlayer)
+        {
+            return;
+        }
+        Vector3 newPos = Vector3.MoveTowards(transform.position, playerTransform.position,
+            stats.speed * Time.fixedDeltaTime);
+        rb2d.MovePosition(newPos);
     }
 
+    public override void TakeDamage(int damage)
+    {
+        base.TakeDamage(damage);
+        HPIndicator.transform.localScale = new Vector3(currentHealth / stats.maxHealth, 1, 1);
+    }
+    
+    //Helper functions
+    private bool CheckCollision()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.2f);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Player")) return true;
+        }
+
+        return false;
+    }
+
+    IEnumerator ResetDamagingPlayerFlag()
+    {
+        yield return new WaitForSeconds(1f);
+        isDamagingPlayer = false;
+    }
+    
+    // Collisions
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log($"Collision detected with {other.gameObject.name}"); // Check what it collides with
@@ -47,8 +83,7 @@ public class Enemy : MonoBehaviour, IMoveable, IDamagable
         {
             Debug.Log("Bullet hit!");
             TakeDamage(Random.Range(2, 5));
+            Destroy(other.gameObject);
         }
     }
-
-
 }
