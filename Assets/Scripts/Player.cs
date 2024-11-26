@@ -57,7 +57,6 @@ public class Player : MonoBehaviour, IMoveable
         Vector3 directionVec = mouseWorldPos - transform.position;
 
         float angle = Mathf.Atan2(directionVec.y, directionVec.x) * Mathf.Rad2Deg;
-        Debug.Log(angle);
         gunGO.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         
         
