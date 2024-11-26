@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour, IMoveable
     void Update()
     {
         Move();
+        GunRotation();
     }
 
     public void Move()
@@ -49,9 +51,15 @@ public class Player : MonoBehaviour, IMoveable
 
     public void GunRotation()
     {
+        
         Vector3 mousePos = Input.mousePosition;
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        Vector3 directionVec = mouseWorldPos - transform.position;
+
+        float angle = Mathf.Atan2(directionVec.y, directionVec.x) * Mathf.Rad2Deg;
+        Debug.Log(angle);
+        gunGO.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         
-        gunGO.transform.rotation = Quaternion.LookRotation(mouseWorldPos);
+        
     }
 }
