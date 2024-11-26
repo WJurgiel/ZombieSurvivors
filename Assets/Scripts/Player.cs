@@ -51,7 +51,6 @@ public class Player : MonoBehaviour, IMoveable
 
     public void GunRotation()
     {
-        
         Vector3 mousePos = Input.mousePosition;
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
         Vector3 directionVec = mouseWorldPos - transform.position;
