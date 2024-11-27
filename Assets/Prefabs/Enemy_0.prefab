@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6510378657309860535}
   - component: {fileID: 672016092917254551}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Enemy_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99,7 +99,7 @@ Animator:
   m_GameObject: {fileID: 884526133086638935}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 050556270436d4f4288557291a1a99c0, type: 2}
+  m_Controller: {fileID: 9100000, guid: f2855d618fc8d9c499189d3f39b9cbbc, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -127,6 +127,7 @@ MonoBehaviour:
   playerTransform: {fileID: 0}
   bloodParticles: {fileID: 4315891899014712740, guid: ea3b5a225e7fecd42af8ed9efd4ddb01, type: 3}
   timeToDisappear: 2
+  isDead: 0
 --- !u!61 &6510378657309860535
 BoxCollider2D:
   m_ObjectHideFlags: 0

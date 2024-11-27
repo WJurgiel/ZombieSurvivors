@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7209e03f0f24574ab2a8f987c14a94e, type: 3}
-  m_Name: Enemy1Stats
+  m_Name: Enemy_4
   m_EditorClassIdentifier: 
-  maxHealth: 10
-  speed: 2
-  armor: 10
+  maxHealth: 200
+  speed: 0
+  armor: 15
