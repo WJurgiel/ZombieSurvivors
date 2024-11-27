@@ -10,17 +10,23 @@ public class Enemy : Damagable, IMoveable
 {
     [SerializeField]
     private Transform playerTransform;
-
-    public GameObject HPIndicator;
     
-    
+    [SerializeField] private GameObject bloodParticles;
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb2d;
     private bool isCollidingWithPlayer = false;
     private bool isDamagingPlayer = false;
+    
+    private HealthBar healthBar;
     void Start()
     {
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>();
         currentHealth = stats.maxHealth;
+        healthBar = GetComponentInChildren<HealthBar>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -54,7 +60,16 @@ public class Enemy : Damagable, IMoveable
     public override void TakeDamage(int damage)
     {
         base.TakeDamage(damage);
-        HPIndicator.transform.localScale = new Vector3(currentHealth / stats.maxHealth, 1, 1);
+        animator.SetTrigger("Hit");
+        healthBar.UpdateHealthBar(stats.maxHealth, currentHealth);
+    }
+
+    protected override void Die()
+    {
+        Instantiate(bloodParticles, transform.position, Quaternion.identity);
+        animator.SetBool("Dead", true);
+        StartCoroutine(PerformDeath());
+        
     }
     
     //Helper functions
@@ -67,6 +82,22 @@ public class Enemy : Damagable, IMoveable
         }
 
         return false;
+    }
+
+    private IEnumerator PerformDeath()
+    {
+        Color currentColor = spriteRenderer.color;
+        float newAlpha = 1f;
+        float timeToDisappear = 1f;
+        float elapsedTime = 0;
+        while (elapsedTime < timeToDisappear)
+        {
+            elapsedTime += Time.deltaTime;
+            newAlpha = Mathf.Lerp(currentColor.a, 0, elapsedTime / timeToDisappear);
+            spriteRenderer.color = new Color(currentColor.r, currentColor.g, currentColor.b, newAlpha);
+            yield return null;
+        }
+        if(newAlpha <= 0f) base.Die();
     }
 
     IEnumerator ResetDamagingPlayerFlag()
