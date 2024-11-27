@@ -8,10 +8,15 @@ using Random = UnityEngine.Random;
 
 public class Enemy : Damagable, IMoveable
 {
-    [SerializeField]
-    private Transform playerTransform;
-    
+    [Header("Misc")]
+    [SerializeField] private Transform playerTransform;
     [SerializeField] private GameObject bloodParticles;
+
+    [Header("Animation Parameters")] 
+    [Min(0), SerializeField]private float timeToDisappear = 0.5f;
+
+    [Header("States")] [SerializeField] private bool isDead = false;
+    
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb2d;
@@ -31,6 +36,7 @@ public class Enemy : Damagable, IMoveable
 
     void Update()
     {
+        if (isDead) return;
         isCollidingWithPlayer = CheckCollision();
         if (isCollidingWithPlayer && !isDamagingPlayer)
         {
@@ -42,7 +48,7 @@ public class Enemy : Damagable, IMoveable
 
     void FixedUpdate()
     {
-        Move();
+        if(!isDead) Move();
     }
     
     // Interface definitions
@@ -66,10 +72,11 @@ public class Enemy : Damagable, IMoveable
 
     protected override void Die()
     {
+        isDead = true;
+        transform.GetChild(0).gameObject.SetActive(false);
         Instantiate(bloodParticles, transform.position, Quaternion.identity);
         animator.SetBool("Dead", true);
         StartCoroutine(PerformDeath());
-        
     }
     
     //Helper functions
@@ -88,7 +95,6 @@ public class Enemy : Damagable, IMoveable
     {
         Color currentColor = spriteRenderer.color;
         float newAlpha = 1f;
-        float timeToDisappear = 1f;
         float elapsedTime = 0;
         while (elapsedTime < timeToDisappear)
         {
@@ -109,6 +115,7 @@ public class Enemy : Damagable, IMoveable
     // Collisions
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (isDead) return;
         Debug.Log($"Collision detected with {other.gameObject.name}"); // Check what it collides with
         if (other.gameObject.CompareTag("Bullet")) 
         {

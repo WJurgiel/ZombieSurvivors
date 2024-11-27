@@ -18,6 +18,7 @@ public class HealthBar : MonoBehaviour
 
     public void UpdateHealthBar(float maxHealth, float currentHealth)
     {
+        if (!gameObject.activeInHierarchy) return;
         targetFillAmount = currentHealth / maxHealth;
         drainHealthBarCoroutine = StartCoroutine(DrainHealthBar());
         CheckHealthBarGradient();

@@ -124,8 +124,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 0
   stats: {fileID: 11400000, guid: 6f951163421b46541963712244bcc46c, type: 2}
-  playerTransform: {fileID: 6201254769912371762, guid: 12fbf067d61818c479855fb03334bc3c, type: 3}
+  playerTransform: {fileID: 0}
   bloodParticles: {fileID: 4315891899014712740, guid: ea3b5a225e7fecd42af8ed9efd4ddb01, type: 3}
+  timeToDisappear: 2
 --- !u!61 &6510378657309860535
 BoxCollider2D:
   m_ObjectHideFlags: 0
